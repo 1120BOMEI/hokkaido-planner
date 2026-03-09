@@ -3,117 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北海道之行 2026</title>
+    <title>北海道自訂行程 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; overflow-x: hidden; }
-        
-        /* 橫向滾動日期條 */
+        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; }
         .date-scroll { overflow-x: auto; display: flex; gap: 8px; padding: 10px; scrollbar-width: none; }
         .date-scroll::-webkit-scrollbar { display: none; }
         .date-card { min-width: 60px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; background: white; transition: 0.3s; flex-shrink: 0; }
-        .date-card.active { background-color: #EF4444; color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
-
+        .date-card.active { background-color: #EF4444; color: white; }
+        
         /* 右上角小工具列 */
-        .top-tools {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            gap: 10px;
-            z-index: 50;
-        }
-        .tool-btn {
-            width: 35px;
-            height: 35px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(4px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            color: #FF69B4;
-            transition: 0.3s;
-        }
+        .top-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; z-index: 50; }
+        .tool-btn { width: 35px; height: 35px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(4px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #FF69B4; shadow-sm; }
         .tool-btn.active { background: #FF69B4; color: white; }
+
+        /* 新增按鈕 */
+        .add-btn { position: fixed; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #FF69B4; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(255,105,180,0.4); z-index: 100; }
     </style>
 </head>
 <body>
-    <div id="app" class="max-w-md mx-auto min-h-screen bg-[#E2F0D9] shadow-xl relative">
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-[#E2F0D9] relative pb-20">
         
         <div class="top-tools">
-            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}">
-                <i class="fa-solid fa-location-dot text-sm"></i>
-            </button>
-            <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}">
-                <i class="fa-solid fa-circle-dollar-to-slot text-sm"></i>
-            </button>
-            <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}">
-                <i class="fa-solid fa-basket-shopping text-sm"></i>
-            </button>
+            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-map"></i></button>
+            <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}"><i class="fa-solid fa-coins"></i></button>
+            <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}"><i class="fa-solid fa-cart-shopping"></i></button>
         </div>
 
-        <div class="w-full relative">
-            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="北海道之旅">
-        </div>
+        <img src="./S__457515012_0.jpg" class="w-full h-auto block">
 
-        <div class="bg-[#E2F0D9] px-4 -mt-6 relative z-10 rounded-t-[30px] pt-4">
+        <div class="px-4 -mt-6 relative z-10 rounded-t-[30px] pt-4">
             
             <div v-if="activeNav === 'map'">
                 <div class="date-scroll mb-4">
-                    <div v-for="(day, index) in schedule" :key="index" 
-                         @click="selectedDay = index"
-                         class="date-card shadow-sm" :class="{'active': selectedDay === index}">
+                    <div v-for="(day, index) in schedule" :key="index" @click="selectedDay = index" class="date-card shadow-sm" :class="{'active': selectedDay === index}">
                         <span class="text-[10px] uppercase font-bold">{{ day.week }}</span>
                         <span class="text-lg font-bold">{{ day.dateNum }}</span>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <div v-for="item in schedule[selectedDay].events" class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-pink-400">
-                        <div class="flex items-start gap-4">
-                            <div class="text-pink-500 font-bold text-sm bg-pink-50 px-2 py-1 rounded-lg">{{ item.time }}</div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-gray-800 text-base">{{ item.title }}</h4>
-                                <p class="text-xs text-gray-400 mt-2 leading-relaxed">
-                                    <i class="fa-solid fa-paw mr-1"></i>{{ item.desc }}
-                                </p>
-                            </div>
+                    <div v-for="(item, idx) in schedule[selectedDay].events" :key="idx" class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-pink-400">
+                        <div class="flex justify-between items-start">
+                            <div class="text-pink-500 font-bold text-xs bg-pink-50 px-2 py-1 rounded-lg">{{ item.time }}</div>
+                            <button @click="deleteEvent(idx)" class="text-gray-200 text-xs hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
                         </div>
+                        <h4 class="font-bold text-gray-800 mt-2">{{ item.title }}</h4>
+                        <p class="text-xs text-gray-400 mt-1 leading-relaxed">{{ item.desc }}</p>
                     </div>
+                    <div v-if="schedule[selectedDay].events.length === 0" class="text-center py-10 text-gray-400 text-sm">今天還沒有安排行程喔！</div>
                 </div>
             </div>
 
-            <div v-if="activeNav === 'money'" class="space-y-4 pt-4">
-                <div class="bg-white p-6 rounded-3xl shadow-sm text-center">
-                    <h3 class="text-xs font-bold text-gray-400 mb-4 tracking-widest uppercase">Currency Converter</h3>
-                    <input v-model="jpyInput" type="number" class="w-full bg-gray-50 rounded-2xl p-4 text-center text-2xl font-bold outline-none border-2 border-transparent focus:border-pink-200 transition" placeholder="輸入日圓">
-                    <div class="mt-4 text-3xl font-black text-pink-500">NT$ {{ (jpyInput * rate).toFixed(0) }}</div>
-                    <p class="text-[10px] text-gray-300 mt-2">即時匯率基準：{{ rate }}</p>
-                </div>
+            <div v-if="activeNav === 'money'" class="bg-white p-6 rounded-3xl shadow-sm text-center">
+                <h3 class="text-xs font-bold text-gray-400 mb-4 uppercase">Currency</h3>
+                <input v-model="jpyInput" type="number" class="w-full bg-gray-50 rounded-2xl p-4 text-center text-2xl font-bold" placeholder="日圓">
+                <div class="mt-4 text-3xl font-black text-pink-500">NT$ {{ (jpyInput * rate).toFixed(0) }}</div>
             </div>
 
-            <div v-if="activeNav === 'shop'" class="bg-white p-6 rounded-3xl shadow-sm min-h-[300px] pt-4">
-                <h3 class="font-bold text-gray-700 mb-4 flex items-center">
-                    <i class="fa-solid fa-cart-shopping mr-2 text-pink-400"></i>Shopping List
-                </h3>
+            <div v-if="activeNav === 'shop'" class="bg-white p-6 rounded-3xl shadow-sm min-h-[300px]">
                 <div class="flex gap-2 mb-6">
-                    <input v-model="newTool" class="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm outline-none" placeholder="清單項目...">
-                    <button @click="addTool" class="bg-pink-400 text-white w-12 rounded-xl shadow-md font-bold">＋</button>
+                    <input v-model="newShop" @keyup.enter="addShop" class="flex-1 bg-gray-50 rounded-xl px-4 py-2 text-sm outline-none" placeholder="想買什麼？">
+                    <button @click="addShop" class="bg-pink-400 text-white px-4 rounded-xl font-bold">＋</button>
                 </div>
-                <div class="space-y-3">
-                    <div v-for="t in tools" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition">
-                        <input type="checkbox" v-model="t.done" class="w-5 h-5 accent-pink-500 rounded-full">
-                        <span :class="{'line-through text-gray-300': t.done}" class="text-sm font-medium text-gray-600">{{ t.name }}</span>
-                    </div>
+                <div v-for="(t, idx) in shoppingList" :key="idx" class="flex items-center gap-3 mb-3">
+                    <input type="checkbox" v-model="t.done" @change="saveData" class="w-5 h-5 accent-pink-500">
+                    <span :class="{'line-through text-gray-300': t.done}" class="text-sm flex-1">{{ t.name }}</span>
+                    <button @click="deleteShop(idx)" class="text-gray-200 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
         </div>
 
-        <div class="h-10"></div>
+        <button v-if="activeNav === 'map'" @click="showModal = true" class="add-btn">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <div v-if="showModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
+            <div class="bg-white w-full rounded-3xl p-6 shadow-2xl">
+                <h3 class="font-bold text-lg mb-4 text-gray-800">新增行程 - Day {{ selectedDay + 1 }}</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">時間</label>
+                        <input v-model="form.time" type="text" class="w-full border-b-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" placeholder="例如 09:00">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">標題</label>
+                        <input v-model="form.title" type="text" class="w-full border-b-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" placeholder="景點或餐點名稱">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">備註</label>
+                        <textarea v-model="form.desc" class="w-full border-b-2 border-gray-100 p-2 text-sm outline-none focus:border-pink-300" rows="2" placeholder="細節、地址或博美叮嚀"></textarea>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button @click="showModal = false" class="flex-1 py-3 text-gray-400 font-bold text-sm">取消</button>
+                    <button @click="addEvent" class="flex-1 py-3 bg-pink-400 text-white rounded-2xl font-bold shadow-lg text-sm">儲存行程</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -122,33 +111,63 @@
             setup() {
                 const activeNav = ref('map');
                 const selectedDay = ref(0);
+                const showModal = ref(false);
                 const jpyInput = ref(1000);
                 const rate = ref(0.21);
                 
-                const schedule = ref([
-                    { week: 'Sun', dateNum: '29', events: [{ time: '13:00', title: '酷航 TR892 出發', desc: '桃園機場 13:00 起飛，17:55 抵達新千歲' }, { time: '19:00', title: '札幌入住', desc: '搭乘接駁車前往市區飯店' }]},
-                    { week: 'Mon', dateNum: '30', events: [{ time: '09:00', title: '旭山動物園', desc: '看企鵝散步，記得穿保暖！' }]},
-                    { week: 'Tue', dateNum: '31', events: [{ time: '10:00', title: '美瑛雪景', desc: '拼布之路與聖誕樹之木' }]},
-                    { week: 'Wed', dateNum: '01', events: [{ time: '11:00', title: '小樽散策', desc: '運河拍照、音樂盒博物館' }]},
-                    { week: 'Thu', dateNum: '02', events: [{ time: '09:00', title: '狸小路採買', desc: '最後衝刺藥妝伴手禮' }]},
-                    { week: 'Fri', dateNum: '03', events: [{ time: '10:00', title: '定山溪溫泉', desc: '放鬆身心溫泉一日遊' }]},
-                    { week: 'Sat', dateNum: '04', events: [{ time: '19:10', title: '酷航返台 TR893', desc: '19:10 起飛，22:30 抵達台北' }]}
-                ]);
+                const form = ref({ time: '', title: '', desc: '' });
 
-                const tools = ref(JSON.parse(localStorage.getItem('hkd_tools_v2') || '[]'));
-                const newTool = ref('');
-                const addTool = () => { if(newTool.value){ tools.value.push({name: newTool.value, done:false}); newTool.value=''; save(); } };
-                const save = () => localStorage.setItem('hkd_tools_v2', JSON.stringify(tools.value));
+                // 行程資料，優先從 LocalStorage 讀取，沒有則使用預設
+                const defaultSchedule = [
+                    { week: 'Sun', dateNum: '29', events: [{ time: '13:00', title: '酷航出發', desc: '17:55 抵達新千歲' }] },
+                    { week: 'Mon', dateNum: '30', events: [] },
+                    { week: 'Tue', dateNum: '31', events: [] },
+                    { week: 'Wed', dateNum: '01', events: [] },
+                    { week: 'Thu', dateNum: '02', events: [] },
+                    { week: 'Fri', dateNum: '03', events: [] },
+                    { week: 'Sat', dateNum: '04', events: [{ time: '19:10', title: '酷航返台', desc: '22:30 抵達' }] }
+                ];
+                const schedule = ref(JSON.parse(localStorage.getItem('hkd_schedule_2026')) || defaultSchedule);
+
+                // 購物清單
+                const shoppingList = ref(JSON.parse(localStorage.getItem('hkd_shop_v5')) || []);
+                const newShop = ref('');
+
+                // 儲存資料到手機
+                const saveData = () => {
+                    localStorage.setItem('hkd_schedule_2026', JSON.stringify(schedule.value));
+                    localStorage.setItem('hkd_shop_v5', JSON.stringify(shoppingList.value));
+                };
+
+                // 新增行程
+                const addEvent = () => {
+                    if(!form.value.title) return;
+                    schedule.value[selectedDay.value].events.push({...form.value});
+                    schedule.value[selectedDay.value].events.sort((a,b) => a.time.localeCompare(b.time)); // 按時間排序
+                    form.value = { time: '', title: '', desc: '' };
+                    showModal.value = false;
+                    saveData();
+                };
+
+                const deleteEvent = (idx) => {
+                    if(confirm('確定要刪除這個行程嗎？')){
+                        schedule.value[selectedDay.value].events.splice(idx, 1);
+                        saveData();
+                    }
+                };
+
+                const addShop = () => { if(newShop.value){ shoppingList.value.push({name: newShop.value, done:false}); newShop.value=''; saveData(); } };
+                const deleteShop = (idx) => { shoppingList.value.splice(idx, 1); saveData(); };
 
                 onMounted(async () => {
                     try {
                         const res = await fetch('https://open.er-api.com/v6/latest/JPY');
                         const data = await res.json();
                         rate.value = data.rates.TWD;
-                    } catch (e) { console.log("匯率更新失敗"); }
+                    } catch (e) {}
                 });
 
-                return { activeNav, selectedDay, schedule, jpyInput, rate, tools, newTool, addTool, save };
+                return { activeNav, selectedDay, showModal, schedule, jpyInput, rate, form, shoppingList, newShop, addEvent, deleteEvent, addShop, deleteShop, saveData };
             }
         }).mount('#app')
     </script>
