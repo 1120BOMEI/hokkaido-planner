@@ -8,81 +8,116 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; }
+        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; overflow-x: hidden; }
+        
         /* 橫向滾動日期條 */
         .date-scroll { overflow-x: auto; display: flex; gap: 8px; padding: 10px; scrollbar-width: none; }
         .date-scroll::-webkit-scrollbar { display: none; }
-        .date-card { min-width: 60px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; background: white; transition: 0.3s; }
+        .date-card { min-width: 60px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; background: white; transition: 0.3s; flex-shrink: 0; }
         .date-card.active { background-color: #EF4444; color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+
+        /* 右上角小工具列 */
+        .top-tools {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 50;
+        }
+        .tool-btn {
+            width: 35px;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #FF69B4;
+            transition: 0.3s;
+        }
+        .tool-btn.active { background: #FF69B4; color: white; }
     </style>
 </head>
 <body>
-    <div id="app" class="max-w-md mx-auto min-h-screen bg-[#E2F0D9] shadow-xl">
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-[#E2F0D9] shadow-xl relative">
         
-        <div class="w-full">
-            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="北海道博美之旅">
+        <div class="top-tools">
+            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}">
+                <i class="fa-solid fa-location-dot text-sm"></i>
+            </button>
+            <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}">
+                <i class="fa-solid fa-circle-dollar-to-slot text-sm"></i>
+            </button>
+            <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}">
+                <i class="fa-solid fa-basket-shopping text-sm"></i>
+            </button>
         </div>
 
-        <div class="bg-[#E2F0D9] px-4 -mt-5 relative z-10 rounded-t-[30px] pt-5">
-            
-            <div class="flex justify-around bg-white p-3 rounded-2xl shadow-sm mb-4">
-                <button @click="activeNav = 'map'" :class="activeNav === 'map' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-location-dot text-xl"></i></button>
-                <button @click="activeNav = 'info'" :class="activeNav === 'info' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-circle-info text-xl"></i></button>
-                <button @click="activeNav = 'shop'" :class="activeNav === 'shop' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-basket-shopping text-xl"></i></button>
-                <button @click="activeNav = 'money'" :class="activeNav === 'money' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-circle-dollar-to-slot text-xl"></i></button>
-            </div>
+        <div class="w-full relative">
+            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="北海道之旅">
+        </div>
 
+        <div class="bg-[#E2F0D9] px-4 -mt-6 relative z-10 rounded-t-[30px] pt-4">
+            
             <div v-if="activeNav === 'map'">
                 <div class="date-scroll mb-4">
                     <div v-for="(day, index) in schedule" :key="index" 
                          @click="selectedDay = index"
                          class="date-card shadow-sm" :class="{'active': selectedDay === index}">
-                        <span class="text-[10px] uppercase">{{ day.week }}</span>
+                        <span class="text-[10px] uppercase font-bold">{{ day.week }}</span>
                         <span class="text-lg font-bold">{{ day.dateNum }}</span>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <div v-for="item in schedule[selectedDay].events" class="bg-white p-4 rounded-2xl shadow-sm">
-                        <div class="flex items-start gap-3">
-                            <div class="text-pink-500 font-bold text-sm pt-1">{{ item.time }}</div>
-                            <div>
-                                <h4 class="font-bold text-gray-800">{{ item.title }}</h4>
-                                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-paw mr-1 text-[10px]"></i>{{ item.desc }}</p>
+                    <div v-for="item in schedule[selectedDay].events" class="bg-white p-5 rounded-2xl shadow-sm border-l-4 border-pink-400">
+                        <div class="flex items-start gap-4">
+                            <div class="text-pink-500 font-bold text-sm bg-pink-50 px-2 py-1 rounded-lg">{{ item.time }}</div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 text-base">{{ item.title }}</h4>
+                                <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                                    <i class="fa-solid fa-paw mr-1"></i>{{ item.desc }}
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="activeNav === 'money'" class="space-y-4">
-                <div class="bg-white p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-700 mb-3">💱 即時匯率換算 (JPY ➔ TWD)</h3>
-                    <input v-model="jpyInput" type="number" class="w-full bg-gray-50 border-none rounded-xl p-3 text-center text-lg outline-none" placeholder="輸入日圓金額">
-                    <div class="text-center mt-3 text-2xl font-black text-pink-500">≈ {{ (jpyInput * rate).toFixed(0) }} 元</div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-sm font-bold text-gray-700 mb-3">💰 總消費累計 (日圓)</h3>
-                    <div class="text-3xl font-black text-blue-500">¥ {{ totalSpend }}</div>
+            <div v-if="activeNav === 'money'" class="space-y-4 pt-4">
+                <div class="bg-white p-6 rounded-3xl shadow-sm text-center">
+                    <h3 class="text-xs font-bold text-gray-400 mb-4 tracking-widest uppercase">Currency Converter</h3>
+                    <input v-model="jpyInput" type="number" class="w-full bg-gray-50 rounded-2xl p-4 text-center text-2xl font-bold outline-none border-2 border-transparent focus:border-pink-200 transition" placeholder="輸入日圓">
+                    <div class="mt-4 text-3xl font-black text-pink-500">NT$ {{ (jpyInput * rate).toFixed(0) }}</div>
+                    <p class="text-[10px] text-gray-300 mt-2">即時匯率基準：{{ rate }}</p>
                 </div>
             </div>
 
-            <div v-if="activeNav === 'shop'" class="bg-white p-5 rounded-2xl shadow-sm min-h-[200px]">
-                <h3 class="font-bold mb-4">🛒 購物清單</h3>
-                <div class="flex gap-2 mb-4">
-                    <input v-model="newTool" class="flex-1 bg-gray-100 rounded-lg px-3 py-2 text-sm" placeholder="想買什麼？">
-                    <button @click="addTool" class="bg-pink-400 text-white px-4 rounded-lg">＋</button>
+            <div v-if="activeNav === 'shop'" class="bg-white p-6 rounded-3xl shadow-sm min-h-[300px] pt-4">
+                <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+                    <i class="fa-solid fa-cart-shopping mr-2 text-pink-400"></i>Shopping List
+                </h3>
+                <div class="flex gap-2 mb-6">
+                    <input v-model="newTool" class="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm outline-none" placeholder="清單項目...">
+                    <button @click="addTool" class="bg-pink-400 text-white w-12 rounded-xl shadow-md font-bold">＋</button>
                 </div>
-                <div v-for="t in tools" class="flex items-center gap-2 mb-2 text-sm">
-                    <input type="checkbox" v-model="t.done" class="accent-pink-500">
-                    <span :class="{'line-through text-gray-300': t.done}">{{ t.name }}</span>
+                <div class="space-y-3">
+                    <div v-for="t in tools" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition">
+                        <input type="checkbox" v-model="t.done" class="w-5 h-5 accent-pink-500 rounded-full">
+                        <span :class="{'line-through text-gray-300': t.done}" class="text-sm font-medium text-gray-600">{{ t.name }}</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="h-10"></div>
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted } = Vue;
+        const { createApp, ref, onMounted } = Vue;
         createApp({
             setup() {
                 const activeNav = ref('map');
@@ -90,46 +125,27 @@
                 const jpyInput = ref(1000);
                 const rate = ref(0.21);
                 
-                // 行程資料 (對應 115.03.29 - 04.04)
                 const schedule = ref([
-                    { week: 'Sun', dateNum: '29', dateFull: '115.03.29', events: [
-                        { time: '13:00', title: '酷航 TR892 出發', desc: '桃園機場報到啟程' },
-                        { time: '17:55', title: '抵達新千歲機場 (CTS)', desc: '領取行李、辦理入境' },
-                        { time: '18:30', title: '預約接機/租車', desc: '前往札幌市區入住' }
-                    ]},
-                    { week: 'Mon', dateNum: '30', dateFull: '115.03.30', events: [
-                        { time: '09:00', title: '旭山動物園', desc: '看企鵝散步、北極熊' }
-                    ]},
-                    { week: 'Tue', dateNum: '31', dateFull: '115.03.31', events: [
-                        { time: '10:00', title: '美瑛拼布之路', desc: '享受絕美雪景' }
-                    ]},
-                    { week: 'Wed', dateNum: '01', dateFull: '115.04.01', events: [
-                        { time: '11:00', title: '小樽運河', desc: '浪漫散步與甜點' }
-                    ]},
-                    { week: 'Thu', dateNum: '02', dateFull: '115.04.02', events: [
-                        { time: '09:00', title: '狸小路採買', desc: '最後衝刺藥妝伴手禮' }
-                    ]},
-                    { week: 'Fri', dateNum: '03', dateFull: '115.04.03', events: [
-                        { time: '10:00', title: '定山溪溫泉', desc: '放鬆身心一日遊' }
-                    ]},
-                    { week: 'Sat', dateNum: '04', dateFull: '115.04.04', events: [
-                        { time: '15:00', title: '新千歲機場免稅店', desc: '最後大採購' },
-                        { time: '19:10', title: '酷航返台', desc: '預計 22:30 抵達台北' }
-                    ]}
+                    { week: 'Sun', dateNum: '29', events: [{ time: '13:00', title: '酷航 TR892 出發', desc: '桃園機場 13:00 起飛，17:55 抵達新千歲' }, { time: '19:00', title: '札幌入住', desc: '搭乘接駁車前往市區飯店' }]},
+                    { week: 'Mon', dateNum: '30', events: [{ time: '09:00', title: '旭山動物園', desc: '看企鵝散步，記得穿保暖！' }]},
+                    { week: 'Tue', dateNum: '31', events: [{ time: '10:00', title: '美瑛雪景', desc: '拼布之路與聖誕樹之木' }]},
+                    { week: 'Wed', dateNum: '01', events: [{ time: '11:00', title: '小樽散策', desc: '運河拍照、音樂盒博物館' }]},
+                    { week: 'Thu', dateNum: '02', events: [{ time: '09:00', title: '狸小路採買', desc: '最後衝刺藥妝伴手禮' }]},
+                    { week: 'Fri', dateNum: '03', events: [{ time: '10:00', title: '定山溪溫泉', desc: '放鬆身心溫泉一日遊' }]},
+                    { week: 'Sat', dateNum: '04', events: [{ time: '19:10', title: '酷航返台 TR893', desc: '19:10 起飛，22:30 抵達台北' }]}
                 ]);
 
-                // 購物清單邏輯
-                const tools = ref(JSON.parse(localStorage.getItem('hkd_tools') || '[]'));
+                const tools = ref(JSON.parse(localStorage.getItem('hkd_tools_v2') || '[]'));
                 const newTool = ref('');
                 const addTool = () => { if(newTool.value){ tools.value.push({name: newTool.value, done:false}); newTool.value=''; save(); } };
-                const save = () => localStorage.setItem('hkd_tools', JSON.stringify(tools.value));
+                const save = () => localStorage.setItem('hkd_tools_v2', JSON.stringify(tools.value));
 
                 onMounted(async () => {
                     try {
                         const res = await fetch('https://open.er-api.com/v6/latest/JPY');
                         const data = await res.json();
                         rate.value = data.rates.TWD;
-                    } catch (e) { console.log("匯率自動更新失敗"); }
+                    } catch (e) { console.log("匯率更新失敗"); }
                 });
 
                 return { activeNav, selectedDay, schedule, jpyInput, rate, tools, newTool, addTool, save };
