@@ -1,117 +1,82 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北海道酷航之旅 ❄️</title>
+    <title>北海道之行 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
-        .pomeranian-header {
-            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=1000&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-        }
+        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; }
+        /* 橫向滾動日期條 */
+        .date-scroll { overflow-x: auto; display: flex; gap: 8px; padding: 10px; scrollbar-width: none; }
+        .date-scroll::-webkit-scrollbar { display: none; }
+        .date-card { min-width: 60px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 15px; background: white; transition: 0.3s; }
+        .date-card.active { background-color: #EF4444; color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
     </style>
 </head>
-<body class="max-w-md mx-auto">
-    <div id="app" class="min-h-screen bg-white shadow-2xl relative pb-28">
+<body>
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-[#E2F0D9] shadow-xl">
         
-        <div class="pomeranian-header h-56 flex flex-col justify-end p-5 text-white rounded-b-[40px] shadow-lg">
-            <h1 class="text-2xl font-bold mb-1">Hokkaido 7 Days ❄️</h1>
-            <p class="text-xs opacity-90"><i class="fa-solid fa-calendar-check mr-1"></i> 115.03.29 - 115.04.04</p>
+        <div class="w-full">
+            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="北海道博美之旅">
+        </div>
+
+        <div class="bg-[#E2F0D9] px-4 -mt-5 relative z-10 rounded-t-[30px] pt-5">
             
-            <div class="mt-3 bg-white/10 backdrop-blur-md rounded-xl p-3 text-[11px] border border-white/20">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-bold text-yellow-300">去程 Scoot 03/29</span>
-                    <span>13:00 ➔ 17:55 (新千歲)</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="font-bold text-yellow-300">回程 Scoot 04/04</span>
-                    <span>19:10 ➔ 22:30 (台北)</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex bg-gray-100 p-1 mx-4 my-6 rounded-2xl">
-            <button @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all">詳細行程</button>
-            <button @click="activeTab = 'tool'" :class="activeTab === 'tool' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all">匯率記帳</button>
-            <button @click="activeTab = 'shop'" :class="activeTab === 'shop' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all">購物清單</button>
-        </div>
-
-        <div class="px-5">
-            <div v-if="activeTab === 'itinerary'" class="space-y-6">
-                <div v-for="(day, index) in schedule" :key="index" class="relative pl-6 border-l-2 border-blue-100 ml-2">
-                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm"></div>
-                    <div class="mb-2 text-xs font-black text-blue-500">Day {{ index + 1 }} · {{ day.date }}</div>
-                    <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-50">
-                        <div class="font-bold text-gray-800 mb-1 flex justify-between">
-                            {{ day.title }}
-                            <span v-if="day.time" class="text-[10px] bg-yellow-400 text-black px-2 py-0.5 rounded-full font-bold">Scoot</span>
-                        </div>
-                        <p class="text-xs text-gray-600 leading-relaxed">{{ day.desc }}</p>
-                    </div>
-                </div>
+            <div class="flex justify-around bg-white p-3 rounded-2xl shadow-sm mb-4">
+                <button @click="activeNav = 'map'" :class="activeNav === 'map' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-location-dot text-xl"></i></button>
+                <button @click="activeNav = 'info'" :class="activeNav === 'info' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-circle-info text-xl"></i></button>
+                <button @click="activeNav = 'shop'" :class="activeNav === 'shop' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-basket-shopping text-xl"></i></button>
+                <button @click="activeNav = 'money'" :class="activeNav === 'money' ? 'text-pink-500' : 'text-gray-300'"><i class="fa-solid fa-circle-dollar-to-slot text-xl"></i></button>
             </div>
 
-            <div v-if="activeTab === 'tool'" class="space-y-6">
-                <div class="bg-gradient-to-br from-blue-600 to-blue-400 p-5 rounded-3xl text-white shadow-lg">
-                    <h3 class="text-sm font-bold mb-3 flex items-center"><i class="fa-solid fa-calculator mr-2"></i>日幣換算台幣</h3>
-                    <div class="grid grid-cols-5 items-center gap-2">
-                        <input v-model="jpyInput" type="number" class="col-span-2 bg-white/20 border border-white/30 rounded-xl p-2 text-center text-white placeholder-white/50 outline-none" placeholder="日圓">
-                        <div class="text-center">➔</div>
-                        <div class="col-span-2 text-center font-bold text-xl">
-                            ${{ (jpyInput * exchangeRate).toFixed(0) }} <span class="text-xs">TWD</span>
-                        </div>
+            <div v-if="activeNav === 'map'">
+                <div class="date-scroll mb-4">
+                    <div v-for="(day, index) in schedule" :key="index" 
+                         @click="selectedDay = index"
+                         class="date-card shadow-sm" :class="{'active': selectedDay === index}">
+                        <span class="text-[10px] uppercase">{{ day.week }}</span>
+                        <span class="text-lg font-bold">{{ day.dateNum }}</span>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-gray-700">消費小帳本</h3>
-                        <div class="text-right">
-                            <div class="text-[10px] text-gray-400 uppercase">Total (JPY)</div>
-                            <div class="text-xl font-black text-blue-600">¥ {{ totalExpense.toLocaleString() }}</div>
-                        </div>
-                    </div>
-                    <div class="flex gap-2 mb-4">
-                        <input v-model="expName" type="text" placeholder="買了什麼" class="flex-1 border rounded-lg p-2 text-xs">
-                        <input v-model="expAmt" type="number" placeholder="日圓" class="w-20 border rounded-lg p-2 text-xs">
-                        <button @click="addExpense" class="bg-blue-500 text-white px-3 rounded-lg text-xs font-bold">新增</button>
-                    </div>
-                    <div class="space-y-2 max-h-48 overflow-y-auto">
-                        <div v-for="e in expenses" :key="e.id" class="flex justify-between text-xs p-2 bg-gray-50 rounded-lg">
-                            <span class="text-gray-500">{{ e.name }}</span>
-                            <span class="font-bold">¥ {{ e.amount }}</span>
+                <div class="space-y-4">
+                    <div v-for="item in schedule[selectedDay].events" class="bg-white p-4 rounded-2xl shadow-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="text-pink-500 font-bold text-sm pt-1">{{ item.time }}</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">{{ item.title }}</h4>
+                                <p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-paw mr-1 text-[10px]"></i>{{ item.desc }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="activeTab === 'shop'" class="space-y-4">
-                <div class="flex gap-2">
-                    <input v-model="newShop" @keyup.enter="addShop" type="text" class="flex-1 border rounded-xl px-4 py-2" placeholder="藥妝、伴手禮...">
-                    <button @click="addShop" class="bg-blue-500 text-white px-4 rounded-xl shadow-lg font-bold">加入</button>
+            <div v-if="activeNav === 'money'" class="space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3">💱 即時匯率換算 (JPY ➔ TWD)</h3>
+                    <input v-model="jpyInput" type="number" class="w-full bg-gray-50 border-none rounded-xl p-3 text-center text-lg outline-none" placeholder="輸入日圓金額">
+                    <div class="text-center mt-3 text-2xl font-black text-pink-500">≈ {{ (jpyInput * rate).toFixed(0) }} 元</div>
                 </div>
-                <div v-for="item in shoppingList" :key="item.id" class="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100">
-                    <input type="checkbox" v-model="item.done" @change="save" class="w-5 h-5 accent-blue-500">
-                    <span :class="{'line-through text-gray-300': item.done}" class="flex-1 text-sm">{{ item.name }}</span>
-                    <button @click="removeShop(item.id)" class="text-gray-300"><i class="fa-solid fa-trash-can"></i></button>
+                <div class="bg-white p-5 rounded-2xl shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3">💰 總消費累計 (日圓)</h3>
+                    <div class="text-3xl font-black text-blue-500">¥ {{ totalSpend }}</div>
                 </div>
             </div>
-        </div>
 
-        <div class="fixed bottom-0 max-w-md w-full bg-white/90 backdrop-blur-md border-t border-gray-100 flex justify-around p-3 pb-8 rounded-t-[32px] shadow-2xl">
-            <div @click="activeTab = 'itinerary'" :class="activeTab === 'itinerary' ? 'text-blue-500' : 'text-gray-400'" class="flex flex-col items-center">
-                <i class="fa-solid fa-map-marked-alt text-xl"></i><span class="text-[10px] mt-1 font-bold">詳細行程</span>
-            </div>
-            <div @click="activeTab = 'tool'" :class="activeTab === 'tool' ? 'text-blue-500' : 'text-gray-400'" class="flex flex-col items-center">
-                <i class="fa-solid fa-coins text-xl"></i><span class="text-[10px] mt-1 font-bold">匯率消費</span>
-            </div>
-            <div @click="activeTab = 'shop'" :class="activeTab === 'shop' ? 'text-blue-500' : 'text-gray-400'" class="flex flex-col items-center">
-                <i class="fa-solid fa-shopping-bag text-xl"></i><span class="text-[10px] mt-1 font-bold">購物清單</span>
+            <div v-if="activeNav === 'shop'" class="bg-white p-5 rounded-2xl shadow-sm min-h-[200px]">
+                <h3 class="font-bold mb-4">🛒 購物清單</h3>
+                <div class="flex gap-2 mb-4">
+                    <input v-model="newTool" class="flex-1 bg-gray-100 rounded-lg px-3 py-2 text-sm" placeholder="想買什麼？">
+                    <button @click="addTool" class="bg-pink-400 text-white px-4 rounded-lg">＋</button>
+                </div>
+                <div v-for="t in tools" class="flex items-center gap-2 mb-2 text-sm">
+                    <input type="checkbox" v-model="t.done" class="accent-pink-500">
+                    <span :class="{'line-through text-gray-300': t.done}">{{ t.name }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -120,41 +85,54 @@
         const { createApp, ref, computed, onMounted } = Vue;
         createApp({
             setup() {
-                const activeTab = ref('itinerary');
+                const activeNav = ref('map');
+                const selectedDay = ref(0);
                 const jpyInput = ref(1000);
-                const exchangeRate = ref(0.21);
+                const rate = ref(0.21);
+                
+                // 行程資料 (對應 115.03.29 - 04.04)
+                const schedule = ref([
+                    { week: 'Sun', dateNum: '29', dateFull: '115.03.29', events: [
+                        { time: '13:00', title: '酷航 TR892 出發', desc: '桃園機場報到啟程' },
+                        { time: '17:55', title: '抵達新千歲機場 (CTS)', desc: '領取行李、辦理入境' },
+                        { time: '18:30', title: '預約接機/租車', desc: '前往札幌市區入住' }
+                    ]},
+                    { week: 'Mon', dateNum: '30', dateFull: '115.03.30', events: [
+                        { time: '09:00', title: '旭山動物園', desc: '看企鵝散步、北極熊' }
+                    ]},
+                    { week: 'Tue', dateNum: '31', dateFull: '115.03.31', events: [
+                        { time: '10:00', title: '美瑛拼布之路', desc: '享受絕美雪景' }
+                    ]},
+                    { week: 'Wed', dateNum: '01', dateFull: '115.04.01', events: [
+                        { time: '11:00', title: '小樽運河', desc: '浪漫散步與甜點' }
+                    ]},
+                    { week: 'Thu', dateNum: '02', dateFull: '115.04.02', events: [
+                        { time: '09:00', title: '狸小路採買', desc: '最後衝刺藥妝伴手禮' }
+                    ]},
+                    { week: 'Fri', dateNum: '03', dateFull: '115.04.03', events: [
+                        { time: '10:00', title: '定山溪溫泉', desc: '放鬆身心一日遊' }
+                    ]},
+                    { week: 'Sat', dateNum: '04', dateFull: '115.04.04', events: [
+                        { time: '15:00', title: '新千歲機場免稅店', desc: '最後大採購' },
+                        { time: '19:10', title: '酷航返台', desc: '預計 22:30 抵達台北' }
+                    ]}
+                ]);
 
-                const schedule = [
-                    { date: '115.03.29', time: '13:00', title: '出發前往新千歲 🛫', desc: '13:00 酷航啟航，17:55 抵達新千歲機場。辦理入境後搭乘 JR 前往札幌市區，晚餐享用熱騰騰的湯咖哩。' },
-                    { date: '115.03.30', title: '旭山動物園之旅', desc: '看可愛的企鵝散步、北極熊與海豹，感受冬末春初的動物活力。' },
-                    { date: '115.03.31', title: '美瑛 / 富良野', desc: '包車或搭火車前往美瑛，欣賞壯麗的拼布之路與雪白大地。' },
-                    { date: '115.04.01', title: '小樽浪漫一日遊', desc: '漫步小樽運河、參觀哨子館、八音盒堂，品嚐 LeTAO 甜點。' },
-                    { date: '115.04.02', title: '札幌市區自由行', desc: '狸小路採買、大通公園散步、札幌電視塔拍照。' },
-                    { date: '115.04.03', title: '定山溪溫泉 (建議)', desc: '泡湯放鬆身心，準備回程。' },
-                    { date: '115.04.04', time: '19:10', title: '最後採買與返台 🛬', desc: '下午前往新千歲機場國內線採買伴手禮。19:10 酷航起飛，22:30 平安抵達台灣。' }
-                ];
-
-                const shoppingList = ref(JSON.parse(localStorage.getItem('hkd_shop_v4') || '[]'));
-                const newShop = ref('');
-                const expenses = ref(JSON.parse(localStorage.getItem('hkd_exp_v4') || '[]'));
-                const expName = ref('');
-                const expAmt = ref('');
+                // 購物清單邏輯
+                const tools = ref(JSON.parse(localStorage.getItem('hkd_tools') || '[]'));
+                const newTool = ref('');
+                const addTool = () => { if(newTool.value){ tools.value.push({name: newTool.value, done:false}); newTool.value=''; save(); } };
+                const save = () => localStorage.setItem('hkd_tools', JSON.stringify(tools.value));
 
                 onMounted(async () => {
                     try {
                         const res = await fetch('https://open.er-api.com/v6/latest/JPY');
                         const data = await res.json();
-                        exchangeRate.value = data.rates.TWD;
-                    } catch (e) { console.log("匯率更新異常"); }
+                        rate.value = data.rates.TWD;
+                    } catch (e) { console.log("匯率自動更新失敗"); }
                 });
 
-                const addShop = () => { if (newShop.value) { shoppingList.value.unshift({ id: Date.now(), name: newShop.value, done: false }); newShop.value = ''; save(); } };
-                const removeShop = (id) => { shoppingList.value = shoppingList.value.filter(i => i.id !== id); save(); };
-                const addExpense = () => { if (expName.value && expAmt.value) { expenses.value.unshift({ id: Date.now(), name: expName.value, amount: Number(expAmt.value) }); expName.value = ''; expAmt.value = ''; save(); } };
-                const totalExpense = computed(() => expenses.value.reduce((sum, i) => sum + i.amount, 0));
-                const save = () => { localStorage.setItem('hkd_shop_v4', JSON.stringify(shoppingList.value)); localStorage.setItem('hkd_exp_v4', JSON.stringify(expenses.value)); };
-
-                return { activeTab, jpyInput, exchangeRate, schedule, shoppingList, newShop, addShop, removeShop, expenses, expName, expAmt, addExpense, totalExpense, save }
+                return { activeNav, selectedDay, schedule, jpyInput, rate, tools, newTool, addTool, save };
             }
         }).mount('#app')
     </script>
