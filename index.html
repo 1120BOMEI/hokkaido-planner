@@ -3,204 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hokkaido Snowy Trip 2026</title>
+    <title>Hokkaido Family Trip 2026 ❄️</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 全螢幕背景延伸 */
-        body { background-color: #D4F1F4; margin: 0; font-family: -apple-system, sans-serif; overflow-x: hidden; }
+        /* [修正重點]：將全頁背景改成與照片下方一樣的「奶油灰色」 */
+        body { background-color: #f2f2f2; margin: 0; font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; }
         
-        /* 限制 App 內容寬度並居中 */
-        .app-container { max-width: 450px; margin: 0 auto; background: transparent; min-height: 100 screen; position: relative; }
-
-        .date-scroll { overflow-x: auto; display: flex; gap: 10px; padding: 15px; scrollbar-width: none; }
+        .date-scroll { overflow-x: auto; display: flex; gap: 12px; padding: 15px; scrollbar-width: none; }
         .date-scroll::-webkit-scrollbar { display: none; }
         
-        .date-card { min-width: 65px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; transition: 0.3s; flex-shrink: 0; border: 1px solid #C0E8ED; }
-        .date-card.active { background-color: #333; color: white; border-color: #333; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        /* 日期卡片：維持像 App 一樣白淨 */
+        .date-card { min-width: 65px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; transition: 0.3s; flex-shrink: 0; border: 1px solid #e0e0e0; }
+        /* [修正重點]：選中的日期換成照片的「水藍色」 */
+        .date-card.active { background-color: #a1cbd9; color: white; border-color: #a1cbd9; box-shadow: 0 4px 10px rgba(161, 203, 217, 0.4); }
 
-        .top-tools { position: absolute; top: 20px; right: 15px; display: flex; gap: 8px; z-index: 100; }
-        .tool-btn { width: 38px; height: 38px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #444; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .tool-btn.active { background: #333; color: white; }
+        .top-tools { position: absolute; top: 20px; right: 15px; display: flex; gap: 10px; z-index: 100; }
+        .tool-btn { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #444; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .tool-btn.active { background: #333333; color: white; }
 
-        .fab-btn { position: fixed; bottom: 30px; left: 50%; transform: translateX(140px); width: 60px; height: 60px; background: #FFD24D; color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 25px rgba(255,210,77,0.4); z-index: 150; }
+        /* [修正重點]：右下角「＋行程」按鈕換成淺藍色，字體改深 gray-800 */
+        .fab-btn { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: #a1cbd9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 25px rgba(161, 203, 217, 0.5); z-index: 150; border: none; }
         
-        .content-card { background: white; border-radius: 28px; border: 1px solid #C0E8ED; }
-
-        /* 下雪特效 */
-        .snowflake { color: white; position: fixed; top: -10px; z-index: 999; animation: fall linear infinite; user-select: none; pointer-events: none; }
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(110vh) rotate(360deg); }
-        }
+        .content-card { background: white; border-radius: 28px; border: 1px solid #EDEDED; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
-    <div id="snow-zone"></div>
-
-    <div id="app" class="app-container pb-28 min-h-screen">
+    <div id="app" class="max-w-md mx-auto min-h-screen relative pb-28">
         
         <div class="top-tools">
-            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-calendar-alt"></i></button>
+            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-calendar-check"></i></button>
             <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}"><i class="fa-solid fa-wallet"></i></button>
             <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}"><i class="fa-solid fa-shopping-bag"></i></button>
         </div>
 
-        <div class="w-full">
-            <img src="./S__457515012_0.jpg" class="w-full h-auto block">
+        <div class="w-full relative">
+            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="新背景圖">
         </div>
 
         <div class="px-5 mt-2">
             
             <div v-if="activeNav === 'map'">
-                <div class="date-scroll mb-2">
+                <div class="date-scroll mb-4">
                     <div v-for="(day, index) in schedule" :key="index" @click="selectedDay = index" class="date-card shadow-sm" :class="{'active': selectedDay === index}">
-                        <span class="text-[10px] font-bold opacity-50">{{ day.week }}</span>
-                        <span class="text-lg font-black">{{ day.dateNum }}</span>
+                        <span class="text-[11px] font-bold opacity-60">{{ day.week }}</span>
+                        <span class="text-xl font-black">{{ day.dateNum }}</span>
                     </div>
                 </div>
-
-                <div class="content-card p-4 mb-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white">
-                    <div class="flex items-center gap-3">
-                        <i :class="weatherData.icon" class="text-3xl text-blue-400"></i>
-                        <div>
-                            <div class="text-xs font-bold text-blue-800">札幌今日天氣預報</div>
-                            <div class="text-[10px] text-gray-400">日期：{{ schedule[selectedDay].dateNum }}</div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-lg font-black text-gray-800">{{ weatherData.temp }}°C</div>
-                        <div class="text-[10px] font-bold text-gray-400">{{ weatherData.desc }}</div>
-                    </div>
-                </div>
-
                 <div class="space-y-4">
-                    <div v-for="(item, idx) in schedule[selectedDay].events" :key="idx" class="content-card p-5 border-l-4 border-blue-200">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-blue-500 font-bold text-[10px] bg-blue-50 px-2 py-1 rounded-md">{{ item.time }}</span>
-                            <button @click="deleteEvent(idx)" class="text-gray-200"><i class="fa-solid fa-times"></i></button>
+                    <div v-for="(item, idx) in schedule[selectedDay].events" :key="idx" class="content-card p-5 border-l-8 border-slate-100">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-gray-500 font-bold text-xs bg-slate-50 px-2 py-1 rounded-lg">{{ item.time }}</span>
+                            <button @click="deleteEvent(idx)" class="text-gray-200 hover:text-red-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
                         </div>
-                        <h4 class="font-bold text-gray-800">{{ item.title }}</h4>
-                        <p class="text-xs text-gray-400 mt-1">{{ item.desc }}</p>
+                        <h4 class="font-bold text-gray-800 text-base leading-snug">{{ item.title }}</h4>
+                        <p class="text-xs text-gray-400 mt-2">{{ item.desc }}</p>
                     </div>
+                    <div v-if="schedule[selectedDay].events.length === 0" class="text-center py-20 text-gray-300 text-sm italic">點擊右下角 + 號安排行程</div>
                 </div>
                 <button @click="showModal = true" class="fab-btn"><i class="fa-solid fa-plus"></i></button>
             </div>
 
-            <div v-if="activeNav === 'money'" class="pt-2">
-                <div class="bg-gray-800 p-8 rounded-[35px] text-white shadow-xl text-center mb-6">
-                    <div class="text-[10px] opacity-30 uppercase font-bold">Total Expenses</div>
-                    <div class="text-4xl font-black mt-1">¥ {{ totalSpend.toLocaleString() }}</div>
-                    <div class="text-xs opacity-50 mt-1">≈ NT$ {{ (totalSpend * rate).toFixed(0) }}</div>
+            <div v-if="activeNav === 'money'" class="pt-4 space-y-6">
+                <div class="bg-gray-800 p-8 rounded-[35px] text-white shadow-xl text-center">
+                    <div class="text-[10px] opacity-40 uppercase tracking-widest font-bold">Total Expenses</div>
+                    <div class="text-4xl font-black mt-2">¥ {{ totalSpend.toLocaleString() }}</div>
+                    <div class="text-sm opacity-50 mt-1">≈ NT$ {{ (totalSpend * rate).toFixed(0).toLocaleString() }}</div>
                 </div>
                 <div class="content-card p-6">
-                    <input v-model="expForm.name" class="w-full bg-gray-50 p-4 rounded-2xl mb-3 outline-none" placeholder="品名">
-                    <input v-model="expForm.amount" type="number" class="w-full bg-gray-50 p-4 rounded-2xl mb-4 outline-none" placeholder="日幣金額">
-                    <button @click="addExpense" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-bold">儲存紀錄</button>
+                    <input v-model="expForm.name" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-3 outline-none" placeholder="品名">
+                    <input v-model="expForm.amount" type="number" class="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl mb-4 outline-none" placeholder="金額 (JPY)">
+                    <button @click="addExpense" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-bold">存入小帳本</button>
                 </div>
             </div>
 
-            <div v-if="activeNav === 'shop'" class="pt-2">
+            <div v-if="activeNav === 'shop'" class="pt-4">
                 <div class="content-card p-6 min-h-[500px]">
-                    <div class="bg-gray-50 p-4 rounded-[25px] mb-6 flex items-center gap-3">
+                    <div class="flex gap-2 mb-6 bg-slate-50 p-3 rounded-2xl">
                         <input v-model="newShopName" class="flex-1 bg-transparent font-bold outline-none" placeholder="想買什麼？">
-                        <button @click="addShop" class="w-10 h-10 bg-gray-800 text-white rounded-full">＋</button>
+                        <button @click="addShop" class="bg-[#a1cbd9] text-gray-800 px-4 py-2 rounded-xl text-sm font-bold active:scale-95 transición">加入</button>
                     </div>
                     <div class="space-y-4">
-                        <div v-for="(t, idx) in shoppingList" :key="idx" class="flex items-center gap-4 p-2 border-b border-gray-50">
-                            <div class="flex-1">
-                                <div :class="{'line-through text-gray-300': t.done}" class="text-sm font-bold text-gray-700">{{ t.name }}</div>
-                            </div>
-                            <input type="checkbox" v-model="t.done" class="w-5 h-5 accent-gray-800">
+                        <div v-for="(t, idx) in shoppingList" :key="idx" class="flex items-center gap-4">
+                            <input type="checkbox" v-model="t.done" @change="saveData" class="w-5 h-5 accent-gray-800">
+                            <span :class="{'line-through text-gray-300 font-normal': t.done}" class="text-sm flex-1 font-bold text-gray-600">{{ t.name }}</span>
+                            <button @click="deleteShop(idx)" class="text-gray-200 hover:text-red-400"><i class="fa-solid fa-times text-xs"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="showModal" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[200] flex items-end justify-center">
-            <div class="bg-white w-full max-w-[450px] rounded-t-[40px] p-8 shadow-2xl">
-                <h3 class="font-black text-center mb-6">新增行程</h3>
-                <input v-model="form.time" class="w-full bg-gray-50 p-4 rounded-2xl mb-3 outline-none" placeholder="時間 (09:00)">
-                <input v-model="form.title" class="w-full bg-gray-50 p-4 rounded-2xl mb-3 outline-none font-bold" placeholder="景點名稱">
-                <textarea v-model="form.desc" class="w-full bg-gray-50 p-4 rounded-2xl mb-6 outline-none text-sm" placeholder="詳細備註..."></textarea>
-                <button @click="addEvent" class="w-full py-5 bg-gray-800 text-white rounded-[25px] font-black">確定</button>
-                <button @click="showModal = false" class="w-full py-2 text-gray-400 mt-2">取消</button>
+        <div v-if="showModal" class="fixed inset-0 bg-black/30 backdrop-blur-md z-[200] flex items-end sm:items-center justify-center p-4">
+            <div class="bg-white w-full max-w-sm rounded-t-[40px] sm:rounded-3xl p-8 shadow-2xl">
+                <div class="w-12 h-1 bg-gray-100 rounded-full mx-auto mb-6"></div>
+                <h3 class="font-black text-xl mb-6 text-center text-gray-800">安排行程</h3>
+                <div class="space-y-4">
+                    <input v-model="form.time" class="w-full bg-slate-50 p-4 rounded-2xloutline-none text-sm" placeholder="時間 (如 09:00)">
+                    <input v-model="form.title" class="w-full bg-slate-50 p-4 rounded-2xl outline-none font-bold" placeholder="景點或地點">
+                    <textarea v-model="form.desc" class="w-full bg-slate-50 p-4 rounded-2xl outline-none text-sm" rows="3" placeholder="詳細備註..."></textarea>
+                    <button @click="addEvent" class="w-full py-5 bg-gray-800 text-white rounded-3xl font-black text-lg">確認儲存</button>
+                    <button @click="showModal = false" class="w-full py-2 text-gray-400 font-bold">先不要</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted, watch } = Vue;
+        const { createApp, ref, computed, onMounted } = Vue;
         createApp({
             setup() {
                 const activeNav = ref('map');
                 const selectedDay = ref(0);
                 const showModal = ref(false);
                 const rate = ref(0.21);
-                const weatherData = ref({ temp: '--', icon: 'fa-solid fa-cloud-sun', desc: '讀取中...' });
-
-                const schedule = ref(JSON.parse(localStorage.getItem('hk_v8_s')) || [
-                    { week: '日', dateNum: '3/29', events: [] },
-                    { week: '一', dateNum: '3/30', events: [] },
-                    { week: '二', dateNum: '3/31', events: [] },
-                    { week: '三', dateNum: '4/1', events: [] },
-                    { week: '四', dateNum: '4/2', events: [] },
-                    { week: '五', dateNum: '4/3', events: [] },
-                    { week: '六', dateNum: '4/4', events: [] }
+                const schedule = ref(JSON.parse(localStorage.getItem('hk_v7_s')) || [
+                    { week: '日', dateNum: '3/29', events: [{ time: '13:00', title: '酷航 TR892 出發', desc: '桃園機場 CI0130' }] },
+                    { week: '一', dateNum: '3/30', events: [] }, { week: '二', dateNum: '3/31', events: [] }, { week: '三', dateNum: '4/1', events: [] }, { week: '四', dateNum: '4/2', events: [] }, { week: '五', dateNum: '4/3', events: [] }, { week: 'Sat', dateNum: '4/4', events: [{ time: '19:10', title: '酷航 TR893 返台', desc: '抵達桃園機場' }] }
                 ]);
-
-                // 模擬抓取札幌天氣 (因為 API 通常需要付費 Key，這裡模擬不同日期的變化)
-                const fetchWeather = () => {
-                    const weathers = [
-                        { temp: '-2', icon: 'fa-solid fa-snowflake', desc: '大雪 ❄️' },
-                        { temp: '1', icon: 'fa-solid fa-cloud-meatball', desc: '多雲轉雪' },
-                        { temp: '4', icon: 'fa-solid fa-cloud-sun', desc: '晴時多雲' },
-                        { temp: '0', icon: 'fa-solid fa-wind', desc: '強風注意' }
-                    ];
-                    weatherData.value = weathers[selectedDay.value % weathers.length];
-                };
-
-                watch(selectedDay, fetchWeather);
-
-                // 雪花產生器
-                const createSnow = () => {
-                    const zone = document.getElementById('snow-zone');
-                    for (let i = 0; i < 30; i++) {
-                        let snow = document.createElement('div');
-                        snow.className = 'snowflake';
-                        snow.innerHTML = '❄';
-                        snow.style.left = Math.random() * 100 + 'vw';
-                        snow.style.animationDuration = (Math.random() * 3 + 5) + 's';
-                        snow.style.opacity = Math.random();
-                        snow.style.fontSize = (Math.random() * 10 + 10) + 'px';
-                        zone.appendChild(snow);
-                    }
-                };
-
-                const expenses = ref(JSON.parse(localStorage.getItem('hk_v8_e')) || []);
+                const form = ref({ time: '', title: '', desc: '' });
+                const expenses = ref(JSON.parse(localStorage.getItem('hk_v7_e')) || []);
                 const expForm = ref({ name: '', amount: '' });
-                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_v8_sh')) || []);
+                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_v7_sh')) || []);
                 const newShopName = ref('');
-
-                const saveData = () => {
-                    localStorage.setItem('hk_v8_s', JSON.stringify(schedule.value));
-                    localStorage.setItem('hk_v8_e', JSON.stringify(expenses.value));
-                    localStorage.setItem('hk_v8_sh', JSON.stringify(shoppingList.value));
-                };
-
-                const addEvent = () => {
-                    schedule.value[selectedDay.value].events.push({...form.value});
-                    showModal.value = false; saveData();
-                };
-
-                onMounted(() => {
-                    createSnow();
-                    fetchWeather();
-                });
-
-                return { activeNav, selectedDay, showModal, schedule, weatherData, expenses, expForm, shoppingList, newShopName, totalSpend: computed(() => expenses.value.reduce((s, i) => s + Number(i.amount), 0)), rate };
+                const saveData = () => { localStorage.setItem('hk_v7_s', JSON.stringify(schedule.value)); localStorage.setItem('hk_v7_e', JSON.stringify(expenses.value)); localStorage.setItem('hk_v7_sh', JSON.stringify(shoppingList.value)); };
+                const addEvent = () => { if(!form.value.title) return; schedule.value[selectedDay.value].events.push({...form.value}); schedule.value[selectedDay.value].events.sort((a,b) => a.time.localeCompare(b.time)); form.value = { time: '', title: '', desc: '' }; showModal.value = false; saveData(); };
+                const deleteEvent = (i) => { schedule.value[selectedDay.value].events.splice(i, 1); saveData(); };
+                const addExpense = () => { if(expForm.value.amount){ expenses.value.unshift({...expForm.value}); expForm.value={name:'',amount:''}; saveData(); } };
+                const addShop = () => { if(newShopName.value){ shoppingList.value.push({name:newShopName.value, done:false}); newShopName.value=''; saveData(); } };
+                const deleteShop = (i) => { shoppingList.value.splice(i, 1); saveData(); };
+                const totalSpend = computed(() => expenses.value.reduce((s, i) => s + Number(i.amount), 0));
+                onMounted(async () => { try { const res = await fetch('https://open.er-api.com/v6/latest/JPY'); const d = await res.json(); rate.value = d.rates.TWD; } catch (e) {} });
+                return { activeNav, selectedDay, showModal, schedule, form, expenses, expForm, shoppingList, newShopName, addEvent, deleteEvent, addExpense, addShop, deleteShop, saveData, totalSpend, rate };
             }
         }).mount('#app')
     </script>
