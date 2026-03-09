@@ -3,40 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北海道之行 2026</title>
+    <title>北海道博美之旅 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #E2F0D9; margin: 0; font-family: sans-serif; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #E2F0D9; margin: 0; }
         .banner-box { width: 100%; background-color: #A5D8FF; line-height: 0; }
         .banner-img { width: 100%; height: auto; display: block; }
-        .main-content { background-color: #E2F0D9; border-radius: 30px 30px 0 0; margin-top: -20px; position: relative; padding: 20px 15px; min-height: 100vh; }
-        .tab-bar { display: flex; justify-content: space-around; background: white; border-radius: 15px; padding: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .main-content { background-color: #E2F0D9; border-radius: 35px 35px 0 0; margin-top: -30px; position: relative; z-index: 10; padding: 20px 16px; min-height: 100vh; }
+        .tab-bar { display: flex; justify-content: space-around; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
-<div id="app" class="max-w-md mx-auto shadow-xl">
+<div id="app" class="max-w-md mx-auto shadow-2xl overflow-x-hidden">
     <div class="banner-box">
-       <img src="./S__457515012_0.jpg" class="banner-img">
+        <img src="./S__457515012_0.jpg" class="banner-img">
     </div>
     <main class="main-content">
         <nav class="tab-bar">
-            <button v-for="t in tabs" @click="activeTab = t.id" :class="['p-2 rounded-lg', activeTab === t.id ? 'bg-pink-400 text-white' : 'text-pink-300']">
-                <i :data-lucide="t.icon"></i>
+            <button v-for="t in tabs" @click="activeTab = t.id" :class="['p-3 rounded-2xl transition-all', activeTab === t.id ? 'bg-pink-400 text-white shadow-md scale-110' : 'text-pink-300']">
+                <i :data-lucide="t.icon" class="w-6 h-6"></i>
             </button>
         </nav>
         <div v-if="activeTab === 'itinerary'">
-            <div class="flex overflow-x-auto space-x-2 mb-4 pb-2">
-                <div v-for="d in dates" @click="selectedDate = d.date" :class="['min-w-[60px] p-3 rounded-xl text-center cursor-pointer', selectedDate === d.date ? 'bg-pink-400 text-white' : 'bg-white text-gray-400']">
-                    <div class="text-[10px] uppercase">{{d.week}}</div>
-                    <div class="text-lg font-bold">{{d.dayNum}}</div>
+            <div class="flex overflow-x-auto space-x-3 mb-6 pb-2 no-scrollbar">
+                <div v-for="d in dates" @click="selectedDate = d.date" :class="['flex flex-col items-center min-w-[65px] py-3 rounded-2xl cursor-pointer transition-all', selectedDate === d.date ? 'bg-pink-400 text-white shadow-lg' : 'bg-white text-gray-400']">
+                    <span class="text-[10px] font-bold">{{ d.week }}</span>
+                    <span class="text-xl font-black">{{ d.dayNum }}</span>
                 </div>
             </div>
-            <div v-for="item in filteredItinerary" class="bg-white p-4 rounded-2xl mb-3 shadow-sm border border-white">
-                <div class="text-[10px] text-pink-400 font-bold">{{item.time}}</div>
-                <div class="font-bold text-gray-800">{{item.name}}</div>
-                <div class="text-xs text-gray-400 mt-1">🐾 {{item.note}}</div>
+            <div v-for="item in filteredItinerary" class="mb-4">
+                <div v-if="item.type === 'flight'" class="bg-gradient-to-br from-blue-400 to-blue-500 rounded-[30px] p-6 text-white shadow-xl">
+                    <div class="flex justify-between items-center mb-4"><span class="bg-white/20 px-3 py-1 rounded-full text-[10px]">{{item.name}}</span><i data-lucide="plane" class="w-5 h-5"></i></div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-center"><p class="text-2xl font-black">TPE</p><p class="text-[10px] opacity-70">桃園機場</p></div>
+                        <div class="flex-1 border-t-2 border-dashed border-white/30 mx-4"></div>
+                        <div class="text-center"><p class="text-2xl font-black">CTS</p><p class="text-[10px] opacity-70">新千歲機場</p></div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10 flex justify-between text-xs font-bold"><span>🛫 {{item.depTime}}</span><span>🛬 {{item.arrTime}}</span></div>
+                </div>
+                <div v-else class="bg-white rounded-[25px] p-5 shadow-sm border border-white flex justify-between items-center">
+                    <div><p class="text-[10px] text-pink-400 font-bold">{{item.time}}</p><h3 class="font-bold text-gray-800">{{item.name}}</h3><p class="text-xs text-gray-400 mt-1">🐾 {{item.note}}</p></div>
+                    <i data-lucide="navigation" class="text-blue-300 w-5 h-5"></i>
+                </div>
             </div>
         </div>
     </main>
@@ -47,7 +58,7 @@
         setup() {
             const activeTab = ref('itinerary');
             const selectedDate = ref('03.29');
-            const tabs = [{id:'itinerary', icon:'map-pin'}, {id:'info', icon:'info'}];
+            const tabs = [{id:'itinerary', icon:'map-pin'}, {id:'info', icon:'info'}, {id:'shop', icon:'shopping-basket'}, {id:'pay', icon:'circle-dollar-sign'}];
             const dates = [
                 {week:'Sun', dayNum:'29', date:'03.29'}, {week:'Mon', dayNum:'30', date:'03.30'},
                 {week:'Tue', dayNum:'31', date:'03.31'}, {week:'Wed', dayNum:'01', date:'04.01'},
@@ -55,8 +66,9 @@
                 {week:'Sat', dayNum:'04', date:'04.04'}
             ];
             const itinerary = ref([
-                {date:'03.29', time:'13:00', name:'去程航班 TR892', note:'桃園機場出發'},
-                {date:'04.04', time:'19:10', name:'回程航班', note:'新千歲機場出發'}
+                {date:'03.29', type:'flight', name:'去程航班 TR892', depTime:'13:00', arrTime:'17:55'},
+                {date:'03.29', time:'18:30', name:'預約接機', note:'領取行李後前往飯店'},
+                {date:'04.04', type:'flight', name:'回程航班', depTime:'19:10', arrTime:'22:30'}
             ]);
             const filteredItinerary = computed(() => itinerary.value.filter(i => i.date === selectedDate.value));
             onMounted(() => lucide.createIcons());
