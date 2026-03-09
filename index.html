@@ -3,127 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hokkaido Trip 2026</title>
+    <title>Hokkaido Snowy Trip 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 強制重置：確保背景顏色與照片完全融合 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* 全頁面設定為水藍色背景，並延伸到全頁 */
+        body { background-color: #D4F1F4; margin: 0; font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; position: relative; }
         
-        body { 
-            background-color: #F1F1F1; /* 根據新照片調配的奶油灰色 */
-            font-family: -apple-system, system-ui, sans-serif; 
-            overflow-x: hidden; 
-        }
-        
-        /* 讓照片滿版，不留任何縫隙 */
-        .header-img { width: 100%; display: block; }
-
         .date-scroll { overflow-x: auto; display: flex; gap: 10px; padding: 15px; scrollbar-width: none; }
         .date-scroll::-webkit-scrollbar { display: none; }
         
-        /* 日期卡片：純白圓角 App 感 */
-        .date-card { min-width: 60px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 18px; background: white; transition: 0.2s; flex-shrink: 0; border: 1px solid #E8E8E8; }
-        .date-card.active { background-color: #333; color: white; border-color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* 日期卡片：淺水藍色調 */
+        .date-card { min-width: 65px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: white; transition: 0.3s; flex-shrink: 0; border: 1px solid #C0E8ED; }
+        .date-card.active { background-color: #333333; color: white; border-color: #333333; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-        /* 右上角切換鈕：毛玻璃質感 */
-        .top-tools { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; z-index: 100; }
-        .tool-btn { width: 40px; height: 40px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #555; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        /* 右上角工具列：深灰色避開人物 */
+        .top-tools { position: absolute; top: 20px; right: 15px; display: flex; gap: 10px; z-index: 100; }
+        .tool-btn { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #444; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .tool-btn.active { background: #333; color: white; }
 
-        /* 黃色新增按鈕：參考博美開車圖的亮黃色 */
-        .fab-btn { position: fixed; bottom: 25px; right: 20px; width: 58px; height: 58px; background: #FFD24D; color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 5px 20px rgba(255,210,77,0.4); z-index: 150; }
+        /* 黃色新增行程按鈕 (FAB) */
+        .fab-btn { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: #FFD24D; color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 25px rgba(255,210,77,0.4); z-index: 150; border: none; }
         
-        /* 內容卡片 */
-        .content-card { background: white; border-radius: 24px; border: 1px solid #EBEBEB; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-        .shop-img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; background: #f5f5f5; }
+        /* 內容卡片：App 風格 */
+        .content-card { background: white; border-radius: 28px; border: 1px solid #C0E8ED; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .shop-img-preview { width: 65px; height: 65px; object-fit: cover; border-radius: 16px; background: #F9F9F9; }
+
+        /* 下雪特效 CSS */
+        .snowflake { color: white; font-size: 1.2em; font-family: Arial, sans-serif; text-shadow: 0 0 5px rgba(255,255,255,0.8); position: fixed; top: -10%; z-index: 9999; user-select: none; cursor: default; }
+
+        @keyframes snowflakes-fall {
+            0% { top: -10%; }
+            100% { top: 100%; }
+        }
+
+        @keyframes snowflakes-shake {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(80px); }
+        }
+
+        .snowflake:nth-of-type(1) { left: 10%; animation-delay: 0s, 0s; }
+        .snowflake:nth-of-type(2) { left: 20%; animation-delay: 1s, 1s; }
+        .snowflake:nth-of-type(3) { left: 30%; animation-delay: 6s, 0.5s; }
+        .snowflake:nth-of-type(4) { left: 40%; animation-delay: 4s, 2s; }
+        .snowflake:nth-of-type(5) { left: 50%; animation-delay: 2s, 1.5s; }
+        .snowflake:nth-of-type(6) { left: 60%; animation-delay: 8s, 3s; }
+        .snowflake:nth-of-type(7) { left: 70%; animation-delay: 6s, 2s; }
+        .snowflake:nth-of-type(8) { left: 80%; animation-delay: 10s, 1s; }
+        .snowflake:nth-of-type(9) { left: 90%; animation-delay: 3s, 1.5s; }
+        .snowflake:nth-of-type(10) { left: 25%; animation-delay: 2s, 0s; }
+        .snowflake:nth-of-type(11) { left: 65%; animation-delay: 4s, 2.5s; }
+        .snowflake:nth-of-type(12) { left: 35%; animation-delay: 1.5s, 1s; }
+
+        .snowflake { animation-name: snowflakes-fall, snowflakes-shake; animation-duration: 10s, 3s; animation-timing-function: linear, ease-in-out; animation-iteration-count: infinite, infinite; animation-play-state: running, running; }
     </style>
 </head>
 <body>
-    <div id="app" class="max-w-md mx-auto min-h-screen relative pb-24">
+    <div id="app" class="max-w-md mx-auto min-h-screen relative pb-28">
         
-        <div class="top-tools">
-            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-calendar-day text-sm"></i></button>
-            <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}"><i class="fa-solid fa-yen-sign text-sm"></i></button>
-            <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}"><i class="fa-solid fa-bag-shopping text-sm"></i></button>
+        <div class="snowflakes" aria-hidden="true">
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
+            <div class="snowflake">❅</div>
+            <div class="snowflake">❆</div>
         </div>
 
-        <img src="./S__457515012_0.jpg" class="header-img" alt="Background">
+        <div class="top-tools">
+            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-calendar-check text-lg"></i></button>
+            <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}"><i class="fa-solid fa-wallet text-lg"></i></button>
+            <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}"><i class="fa-solid fa-shopping-bag text-lg"></i></button>
+        </div>
 
-        <div class="px-4 mt-2">
+        <div class="w-full relative">
+            <img src="./S__457515012_0.jpg" class="w-full h-auto block" alt="新背景圖">
+        </div>
+
+        <div class="px-5 mt-2 relative z-10">
             
             <div v-if="activeNav === 'map'">
-                <div class="date-scroll mb-3">
+                <div class="date-scroll mb-4">
                     <div v-for="(day, index) in schedule" :key="index" @click="selectedDay = index" class="date-card shadow-sm" :class="{'active': selectedDay === index}">
-                        <span class="text-[10px] font-bold opacity-40">{{ day.week }}</span>
-                        <span class="text-base font-black">{{ day.dateNum }}</span>
+                        <span class="text-[11px] font-bold opacity-50">{{ day.week }}</span>
+                        <span class="text-xl font-black">{{ day.dateNum }}</span>
                     </div>
                 </div>
-                
-                <div class="space-y-3">
-                    <div v-for="(item, idx) in schedule[selectedDay].events" :key="idx" class="content-card p-5">
+                <div class="space-y-4">
+                    <div v-for="(item, idx) in schedule[selectedDay].events" :key="idx" class="content-card p-6 border-l-8 border-pink-300">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{{ item.time }}</span>
-                            <button @click="deleteEvent(idx)" class="text-gray-200"><i class="fa-solid fa-xmark"></i></button>
+                            <span class="text-pink-600 font-bold text-xs bg-pink-50 px-2 py-1 rounded-lg">{{ item.time }}</span>
+                            <button @click="deleteEvent(idx)" class="text-gray-200 hover:text-red-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
                         </div>
-                        <h4 class="font-bold text-gray-800">{{ item.title }}</h4>
-                        <p class="text-[11px] text-gray-400 mt-1">{{ item.desc }}</p>
+                        <h4 class="font-bold text-gray-800 text-base leading-snug">{{ item.title }}</h4>
+                        <p class="text-xs text-gray-400 mt-2">{{ item.desc }}</p>
                     </div>
+                    <div v-if="schedule[selectedDay].events.length === 0" class="text-center py-20 text-blue-300 text-sm">點擊 + 安排今日行程 ❄️</div>
                 </div>
-
                 <button @click="showModal = true" class="fab-btn"><i class="fa-solid fa-plus"></i></button>
             </div>
 
-            <div v-if="activeNav === 'money'" class="pt-2">
-                <div class="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm mb-4 text-center">
-                    <div class="text-[10px] text-gray-300 font-bold uppercase tracking-wider">Total Cost</div>
-                    <div class="text-3xl font-black text-gray-800 mt-1">¥ {{ totalSpend.toLocaleString() }}</div>
-                    <div class="text-xs text-gray-400">約 NT$ {{ (totalSpend * rate).toFixed(0) }}</div>
+            <div v-if="activeNav === 'money'" class="pt-2 space-y-6">
+                <div class="bg-gray-800 p-8 rounded-[35px] text-white shadow-xl text-center relative overflow-hidden">
+                    <div class="text-[10px] opacity-30 uppercase tracking-widest font-bold">Total Expenses</div>
+                    <div class="text-4xl font-black mt-2">¥ {{ totalSpend.toLocaleString() }}</div>
+                    <div class="text-sm opacity-50 mt-2 font-medium">≈ NT$ {{ (totalSpend * rate).toFixed(0).toLocaleString() }}</div>
+                    <i class="fa-solid fa-snowflake absolute -right-6 -bottom-6 text-9xl opacity-5"></i>
                 </div>
-                
-                <div class="content-card p-5">
-                    <input v-model="expForm.name" class="w-full bg-gray-50 p-3 rounded-xl mb-2 text-sm outline-none" placeholder="品名">
-                    <input v-model="expForm.amount" type="number" class="w-full bg-gray-50 p-3 rounded-xl mb-3 text-sm outline-none" placeholder="金額 (JPY)">
-                    <button @click="addExpense" class="w-full py-3 bg-gray-800 text-white rounded-xl font-bold text-sm">新增紀錄</button>
+                <div class="content-card p-6">
+                    <h3 class="text-[10px] font-black text-gray-400 mb-4 uppercase text-center">消費紀錄</h3>
+                    <input v-model="expForm.name" class="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl mb-3 outline-none" placeholder="項目名稱 (例如：拉麵)">
+                    <input v-model="expForm.amount" type="number" class="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl mb-4 outline-none" placeholder="金額 (日圓)">
+                    <button @click="addExpense" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-bold">存入小帳本</button>
+                    
+                    <div class="mt-6 space-y-3">
+                        <div v-for="(e, i) in expenses" :key="i" class="flex justify-between text-sm border-b border-gray-100 pb-2">
+                            <span class="text-gray-600 font-medium">{{ e.name }}</span>
+                            <span class="font-bold text-gray-800">¥{{ e.amount.toLocaleString() }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div v-if="activeNav === 'shop'" class="pt-2">
-                <div class="content-card p-5">
-                    <div class="flex gap-3 mb-6 items-center bg-gray-50 p-3 rounded-2xl">
-                        <div class="relative w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-gray-200 overflow-hidden shrink-0">
-                            <img v-if="newShopImg" :src="newShopImg" class="w-full h-full object-cover">
-                            <i v-else class="fa-solid fa-camera text-gray-300"></i>
-                            <input type="file" @change="handleImgUpload" class="absolute inset-0 opacity-0" accept="image/*">
+                <div class="content-card p-6 min-h-[550px]">
+                    <h3 class="font-black text-xl mb-6 text-center text-gray-800">Shopping List</h3>
+                    <div class="bg-gray-50 p-5 rounded-[25px] mb-8 space-y-4">
+                        <div class="flex gap-4 items-center">
+                            <div class="relative w-16 h-16 bg-white rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden shrink-0">
+                                <img v-if="newShopImg" :src="newShopImg" class="w-full h-full object-cover">
+                                <i v-else class="fa-solid fa-camera text-gray-300"></i>
+                                <input type="file" @change="handleImgUpload" class="absolute inset-0 opacity-0" accept="image/*">
+                            </div>
+                            <input v-model="newShopName" class="flex-1 bg-transparent border-b border-gray-200 py-2 text-sm font-bold outline-none" placeholder="想買什麼呢...">
                         </div>
-                        <input v-model="newShopName" class="flex-1 bg-transparent text-sm font-bold outline-none" placeholder="想買的東西...">
-                        <button @click="addShop" class="bg-gray-800 text-white px-4 py-2 rounded-xl text-xs">＋</button>
+                        <button @click="addShop" class="w-full bg-gray-800 text-white py-3.5 rounded-2xl font-bold">加入清單</button>
                     </div>
 
-                    <div class="space-y-3">
-                        <div v-for="(t, idx) in shoppingList" :key="idx" class="flex items-center gap-3 p-2 border-b border-gray-50">
-                            <img :src="t.img || 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png'" class="shop-img-preview">
+                    <div class="space-y-4">
+                        <div v-for="(t, idx) in shoppingList" :key="idx" class="flex items-center gap-4 p-2 rounded-2xl bg-gray-50/50">
+                            <img :src="t.img || 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png'" class="shop-img-preview border border-white shadow-sm">
                             <div class="flex-1">
-                                <span :class="{'line-through text-gray-300': t.done}" class="text-sm font-bold text-gray-600">{{ t.name }}</span>
-                                <input type="checkbox" v-model="t.done" @change="saveData" class="block mt-1 accent-gray-800">
+                                <div :class="{'line-through text-gray-300': t.done}" class="text-sm font-bold text-gray-700">{{ t.name }}</div>
+                                <input type="checkbox" v-model="t.done" @change="saveData" class="mt-1.5 w-5 h-5 accent-gray-800">
                             </div>
-                            <button @click="deleteShop(idx)" class="text-gray-200"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                            <button @click="deleteShop(idx)" class="text-gray-200 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <div v-if="showModal" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[200] flex items-end">
-            <div class="bg-white w-full rounded-t-[32px] p-6 shadow-2xl">
-                <h3 class="font-black text-center mb-4">新增行程</h3>
-                <input v-model="form.time" class="w-full bg-gray-50 p-4 rounded-xl mb-2 outline-none" placeholder="時間 (10:00)">
-                <input v-model="form.title" class="w-full bg-gray-50 p-4 rounded-xl mb-2 outline-none font-bold" placeholder="景點名稱">
-                <textarea v-model="form.desc" class="w-full bg-gray-50 p-4 rounded-xl mb-4 outline-none text-sm" placeholder="備註"></textarea>
-                <button @click="addEvent" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-black">確定新增</button>
-                <button @click="showModal = false" class="w-full py-2 text-gray-400 text-sm mt-2">取消</button>
+        <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-md z-[200] flex items-end justify-center">
+            <div class="bg-white w-full rounded-t-[40px] p-8 shadow-2xl">
+                <div class="w-12 h-1 bg-gray-100 rounded-full mx-auto mb-6"></div>
+                <h3 class="font-black text-xl mb-6 text-center text-gray-800">安排行程 ❄️</h3>
+                <div class="space-y-4">
+                    <input v-model="form.time" type="text" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm border border-gray-100" placeholder="時間 (如 09:00)">
+                    <input v-model="form.title" type="text" class="w-full bg-gray-50 p-4 rounded-2xl outline-none font-bold border border-gray-100" placeholder="景點名稱">
+                    <textarea v-model="form.desc" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm border border-gray-100" rows="3" placeholder="詳細內容..."></textarea>
+                    <button @click="addEvent" class="w-full py-5 bg-gray-800 text-white rounded-[25px] font-black text-lg">確定新增</button>
+                    <button @click="showModal = false" class="w-full py-2 text-gray-400 font-bold text-sm">取消</button>
+                </div>
             </div>
         </div>
     </div>
@@ -135,22 +183,26 @@
                 const activeNav = ref('map');
                 const selectedDay = ref(0);
                 const showModal = ref(false);
-                const rate = ref(0.21);
+                const rate = ref(0.215); // 更新即時匯率基準
                 
-                const schedule = ref(JSON.parse(localStorage.getItem('hk_v7_s')) || [
-                    { week: '日', dateNum: '3/29', events: [] },
+                // 完整日期 3/29 - 4/4 (使用新的儲存名稱避免資料衝突)
+                const schedule = ref(JSON.parse(localStorage.getItem('hk_2026_s_snow_v1')) || [
+                    { week: '日', dateNum: '3/29', events: [{ time: '13:00', title: '酷航 TR892 出發', desc: '17:55 抵達新千歲機場 CTS' }] },
                     { week: '一', dateNum: '3/30', events: [] },
                     { week: '二', dateNum: '3/31', events: [] },
                     { week: '三', dateNum: '4/1', events: [] },
                     { week: '四', dateNum: '4/2', events: [] },
                     { week: '五', dateNum: '4/3', events: [] },
-                    { week: '六', dateNum: '4/4', events: [] }
+                    { week: '六', dateNum: '4/4', events: [{ time: '19:10', title: '酷航 TR893 返台', desc: '22:30 抵達台北桃機 TPE' }] }
                 ]);
-
                 const form = ref({ time: '', title: '', desc: '' });
-                const expenses = ref(JSON.parse(localStorage.getItem('hk_v7_e')) || []);
+                
+                // 消費資料
+                const expenses = ref(JSON.parse(localStorage.getItem('hk_2026_e_snow_v1')) || []);
                 const expForm = ref({ name: '', amount: '' });
-                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_v7_sh')) || []);
+                
+                // 購物資料
+                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_2026_sh_snow_v1')) || []);
                 const newShopName = ref('');
                 const newShopImg = ref(null);
 
@@ -170,9 +222,9 @@
                 };
 
                 const saveData = () => {
-                    localStorage.setItem('hk_v7_s', JSON.stringify(schedule.value));
-                    localStorage.setItem('hk_v7_e', JSON.stringify(expenses.value));
-                    localStorage.setItem('hk_v7_sh', JSON.stringify(shoppingList.value));
+                    localStorage.setItem('hk_2026_s_snow_v1', JSON.stringify(schedule.value));
+                    localStorage.setItem('hk_2026_e_snow_v1', JSON.stringify(expenses.value));
+                    localStorage.setItem('hk_2026_sh_snow_v1', JSON.stringify(shoppingList.value));
                 };
 
                 const addEvent = () => {
@@ -181,7 +233,7 @@
                     schedule.value[selectedDay.value].events.sort((a,b) => a.time.localeCompare(b.time));
                     form.value = { time: '', title: '', desc: '' }; showModal.value = false; saveData();
                 };
-                const deleteEvent = (i) => { schedule.value[selectedDay.value].events.splice(i, 1); saveData(); };
+                const deleteEvent = (i) => { if(confirm('刪除此行程？')){ schedule.value[selectedDay.value].events.splice(i, 1); saveData(); } };
                 const addExpense = () => { if(expForm.value.amount){ expenses.value.unshift({...expForm.value}); expForm.value={name:'',amount:''}; saveData(); } };
                 const deleteShop = (i) => { shoppingList.value.splice(i, 1); saveData(); };
                 const totalSpend = computed(() => expenses.value.reduce((s, i) => s + Number(i.amount), 0));
@@ -190,7 +242,7 @@
                     try {
                         const res = await fetch('https://open.er-api.com/v6/latest/JPY');
                         const d = await res.json(); rate.value = d.rates.TWD;
-                    } catch (e) {}
+                    } catch (e) { console.log("匯率更新失敗，使用預設值"); }
                 });
 
                 return { activeNav, selectedDay, showModal, schedule, form, expenses, expForm, shoppingList, newShopName, newShopImg, handleImgUpload, addShop, deleteShop, saveData, totalSpend, rate };
