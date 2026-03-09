@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hokkaido 2026</title>
+    <title>Hokkaido Trip 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,24 +14,21 @@
         .date-card { min-width: 65px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; background: #f8f9fa; transition: 0.3s; flex-shrink: 0; border: 1px solid #f0f0f0; }
         .date-card.active { background-color: #004797; color: white; border-color: #004797; box-shadow: 0 4px 12px rgba(0,71,151,0.2); }
 
-        /* 右上角工具列 */
         .top-tools { position: absolute; top: 20px; right: 15px; display: flex; gap: 10px; z-index: 100; }
         .tool-btn { width: 42px; height: 42px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004797; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .tool-btn.active { background: #004797; color: white; }
 
-        /* 黃色新增行程按鈕 (只在行程頁出現) */
         .fab-btn { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: #FFD24D; color: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 25px rgba(255,210,77,0.5); z-index: 150; border: none; }
         
-        /* 內容卡片 */
         .content-card { background: white; border-radius: 24px; border: 1px solid #f2f2f2; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .shop-img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 15px; background: #f0f0f0; }
+        .shop-img-preview { width: 65px; height: 65px; object-fit: cover; border-radius: 15px; background: #f0f0f0; }
     </style>
 </head>
 <body>
     <div id="app" class="max-w-md mx-auto min-h-screen relative pb-28">
         
         <div class="top-tools">
-            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-map-location-dot"></i></button>
+            <button @click="activeNav = 'map'" class="tool-btn" :class="{'active': activeNav === 'map'}"><i class="fa-solid fa-calendar-alt"></i></button>
             <button @click="activeNav = 'money'" class="tool-btn" :class="{'active': activeNav === 'money'}"><i class="fa-solid fa-coins"></i></button>
             <button @click="activeNav = 'shop'" class="tool-btn" :class="{'active': activeNav === 'shop'}"><i class="fa-solid fa-shopping-bag"></i></button>
         </div>
@@ -59,28 +56,35 @@
                         <h4 class="font-bold text-gray-800">{{ item.title }}</h4>
                         <p class="text-xs text-gray-400 mt-2">{{ item.desc }}</p>
                     </div>
+                    <div v-if="schedule[selectedDay].events.length === 0" class="text-center py-20 text-gray-300 text-sm">點擊右下角黃色 + 新增今日行程</div>
                 </div>
                 <button @click="showModal = true" class="fab-btn"><i class="fa-solid fa-plus"></i></button>
             </div>
 
             <div v-if="activeNav === 'money'" class="pt-4 space-y-6">
                 <div class="bg-slate-900 p-8 rounded-[35px] text-white shadow-xl">
-                    <div class="text-[10px] opacity-40 uppercase tracking-widest font-bold">Total Expenses</div>
-                    <div class="text-4xl font-black mt-1">¥ {{ totalSpend.toLocaleString() }}</div>
-                    <div class="text-sm opacity-50 mt-1">≈ NT$ {{ (totalSpend * rate).toFixed(0) }}</div>
+                    <div class="text-[10px] opacity-40 uppercase tracking-widest font-bold text-center">Total Expenses</div>
+                    <div class="text-4xl font-black mt-1 text-center">¥ {{ totalSpend.toLocaleString() }}</div>
+                    <div class="text-sm opacity-50 mt-1 text-center">≈ NT$ {{ (totalSpend * rate).toFixed(0) }}</div>
                 </div>
                 <div class="content-card p-6">
-                    <h3 class="text-[10px] font-black text-gray-300 mb-4 uppercase">快速記帳</h3>
-                    <input v-model="expForm.name" class="w-full bg-gray-50 p-4 rounded-2xl mb-3 outline-none" placeholder="項目名稱">
+                    <h3 class="text-[10px] font-black text-gray-300 mb-4 uppercase">新增一筆消費</h3>
+                    <input v-model="expForm.name" class="w-full bg-gray-50 p-4 rounded-2xl mb-3 outline-none" placeholder="品名 (例如：拉麵)">
                     <input v-model="expForm.amount" type="number" class="w-full bg-gray-50 p-4 rounded-2xl mb-4 outline-none" placeholder="日幣金額">
                     <button @click="addExpense" class="w-full py-4 bg-slate-800 text-white rounded-2xl font-bold">儲存紀錄</button>
+                    
+                    <div class="mt-6 space-y-3">
+                        <div v-for="(e, i) in expenses" :key="i" class="flex justify-between text-sm border-b border-gray-50 pb-2">
+                            <span class="text-gray-600">{{ e.name }}</span>
+                            <span class="font-bold text-blue-600">¥{{ e.amount }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div v-if="activeNav === 'shop'" class="pt-4">
                 <div class="content-card p-6 min-h-[500px]">
                     <h3 class="font-black text-xl mb-6">Shopping List</h3>
-                    
                     <div class="bg-gray-50 p-4 rounded-[25px] mb-8 space-y-4">
                         <div class="flex gap-4 items-center">
                             <div class="relative w-16 h-16 bg-white rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden shrink-0">
@@ -88,7 +92,7 @@
                                 <i v-else class="fa-solid fa-camera text-gray-300"></i>
                                 <input type="file" @change="handleImgUpload" class="absolute inset-0 opacity-0" accept="image/*">
                             </div>
-                            <input v-model="newShopName" class="flex-1 bg-transparent border-b border-gray-200 py-2 text-sm font-bold outline-none" placeholder="輸入商品...">
+                            <input v-model="newShopName" class="flex-1 bg-transparent border-b border-gray-200 py-2 text-sm font-bold outline-none" placeholder="商品名稱...">
                         </div>
                         <button @click="addShop" class="w-full bg-blue-600 text-white py-3 rounded-2xl font-bold shadow-md">加入清單</button>
                     </div>
@@ -108,14 +112,14 @@
         </div>
 
         <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-md z-[200] flex items-end justify-center">
-            <div class="bg-white w-full rounded-t-[40px] p-8 shadow-2xl">
+            <div class="bg-white w-full rounded-t-[40px] p-8 shadow-2xl transition-all transform translate-y-0">
                 <div class="w-12 h-1 bg-gray-100 rounded-full mx-auto mb-6"></div>
                 <h3 class="font-black text-xl mb-6 text-center">新增行程 - Day {{selectedDay + 1}}</h3>
                 <div class="space-y-4">
                     <input v-model="form.time" type="text" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm" placeholder="時間 (如 09:00)">
                     <input v-model="form.title" type="text" class="w-full bg-gray-50 p-4 rounded-2xl outline-none font-bold" placeholder="景點或地點">
                     <textarea v-model="form.desc" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm" rows="3" placeholder="詳細備註..."></textarea>
-                    <button @click="addEvent" class="w-full py-5 bg-blue-600 text-white rounded-[25px] font-black text-lg">完成</button>
+                    <button @click="addEvent" class="w-full py-5 bg-blue-600 text-white rounded-[25px] font-black text-lg shadow-lg">確認加入行程</button>
                     <button @click="showModal = false" class="w-full py-2 text-gray-400 font-bold">取消</button>
                 </div>
             </div>
@@ -131,19 +135,22 @@
                 const showModal = ref(false);
                 const rate = ref(0.21);
                 
-                // 行程資料
-                const schedule = ref(JSON.parse(localStorage.getItem('hk_2026_s_v3')) || [
-                    { week: '五', dateNum: '3/6', events: [{ time: '08:35', title: '酷航起飛', desc: '桃園機場第一航廈' }] },
-                    { week: '六', dateNum: '3/7', events: [] }, { week: '日', dateNum: '3/8', events: [] }, { week: '一', dateNum: '3/9', events: [] }, { week: '二', dateNum: '3/10', events: [] }, { week: '三', dateNum: '3/11', events: [] }, { week: '四', dateNum: '3/12', events: [] }
+                // 完整日期 3/29 - 4/4
+                const schedule = ref(JSON.parse(localStorage.getItem('hk_2026_s_v4')) || [
+                    { week: '日', dateNum: '3/29', events: [] },
+                    { week: '一', dateNum: '3/30', events: [] },
+                    { week: '二', dateNum: '3/31', events: [] },
+                    { week: '三', dateNum: '4/1', events: [] },
+                    { week: '四', dateNum: '4/2', events: [] },
+                    { week: '五', dateNum: '4/3', events: [] },
+                    { week: '六', dateNum: '4/4', events: [] }
                 ]);
                 const form = ref({ time: '', title: '', desc: '' });
 
-                // 消費資料
-                const expenses = ref(JSON.parse(localStorage.getItem('hk_2026_e_v3')) || []);
+                const expenses = ref(JSON.parse(localStorage.getItem('hk_2026_e_v4')) || []);
                 const expForm = ref({ name: '', amount: '' });
 
-                // 購物資料 (含圖片)
-                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_2026_sh_v3')) || []);
+                const shoppingList = ref(JSON.parse(localStorage.getItem('hk_2026_sh_v4')) || []);
                 const newShopName = ref('');
                 const newShopImg = ref(null);
 
@@ -163,9 +170,9 @@
                 };
 
                 const saveData = () => {
-                    localStorage.setItem('hk_2026_s_v3', JSON.stringify(schedule.value));
-                    localStorage.setItem('hk_2026_e_v3', JSON.stringify(expenses.value));
-                    localStorage.setItem('hk_2026_sh_v3', JSON.stringify(shoppingList.value));
+                    localStorage.setItem('hk_2026_s_v4', JSON.stringify(schedule.value));
+                    localStorage.setItem('hk_2026_e_v4', JSON.stringify(expenses.value));
+                    localStorage.setItem('hk_2026_sh_v4', JSON.stringify(shoppingList.value));
                 };
 
                 const addEvent = () => {
@@ -175,7 +182,14 @@
                     form.value = { time: '', title: '', desc: '' }; showModal.value = false; saveData();
                 };
                 const deleteEvent = (i) => { schedule.value[selectedDay.value].events.splice(i, 1); saveData(); };
-                const addExpense = () => { if(expForm.value.amount){ expenses.value.unshift({...expForm.value}); expForm.value={name:'',amount:''}; saveData(); } };
+                
+                const addExpense = () => { 
+                    if(expForm.value.amount){ 
+                        expenses.value.unshift({...expForm.value}); 
+                        expForm.value={name:'',amount:''}; 
+                        saveData(); 
+                    } 
+                };
                 const deleteShop = (i) => { shoppingList.value.splice(i, 1); saveData(); };
                 const totalSpend = computed(() => expenses.value.reduce((s, i) => s + Number(i.amount), 0));
 
